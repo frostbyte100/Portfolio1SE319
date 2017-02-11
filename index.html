@@ -5,6 +5,8 @@
       <script src="d3.v4.min.js"></script>
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
       <script  src="bitcoin.js"></script>
+
+       <link href='css.css' rel='stylesheet' media='print' />
    </head>
    <body>
        <h1>Bitcoin Block Analysis</h1>
@@ -14,26 +16,16 @@
             <input type ="button" value="Submit" onclick="getNFirstBlocks()"><br><br>
        </form>
 
-   <style>
+       <button onclick="createHistogram()">Number of Blocks Over Time</button>
 
-       .bar {
-           fill: steelblue;
-       }
+       <!--<button onclick="getLastNBlocksRecursive(10);">Test API Call</button>-->
+       <button onclick="createBarGraph()">CreateBarGraph</button>
+       <img src="balls.gif" id="loading">
+       <div id="graph1"></div>
 
-       .bar:hover {
-           fill: brown;
-       }
 
-       .axis--x path {
-           display: none;
-       }
 
-   </style>
 
-      <button onclick="createHistogram()">Number of Blocks Over Time</button>
-      <div id="graph1"></div>
-      <button onclick="getLastNBlocksRecursive(10);">Test API Call</button>
-      <button onclick="createBarGraph()">CreateBarGraph</button>
       <svg width="960" height="500"></svg>
 
    </body>

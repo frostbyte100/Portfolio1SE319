@@ -37,10 +37,7 @@ window.onload = new function(){
         },
         error: function(data){
             console.log(data);
-<<<<<<< HEAD
-=======
            alert("We have made too many requests to the API. Wait a while before making another call.");
->>>>>>> e9749f1aa1de31bf8375ec4101b61d3e9548b748
         }
     });
 
@@ -60,11 +57,11 @@ function getLastNBlocksRecursive(n){
             }
             if(n==1){
                 makeTempCSV();
+                changeTXNumGraph();
             }
         },
         error: function(data){
-            console.log(data);
-<<<<<<< HEAD
+            console.log(data);alert("We have made too many requests to the API. Wait a while before making another call.");
         }
     });
 
@@ -75,11 +72,6 @@ function getNFirstBlocks(){
   for(i=1;i<=document.getElementById("numBlocks").value;i++){
     getABlock(i);
   }
-=======
-            alert("We have made too many requests to the API. Wait a while before making another call.");
-        }
-    });
->>>>>>> e9749f1aa1de31bf8375ec4101b61d3e9548b748
 }
   function getNFirstBlocksRecursive(n,start){
       $.ajax({
@@ -94,6 +86,7 @@ function getNFirstBlocks(){
               }
               if(start==n){
                   makeTempCSV();
+                  changeTXNumGraph();
               }
           },
           error: function(data){
@@ -108,16 +101,9 @@ function getABlock(n){
   $.getJSON("http://btc.blockr.io/api/v1/block/raw/"+n, function(data){
     var b = new Block(n, data["data"]["tx"].length, new Date( parseInt(data["data"]["time"])*1000 ));
     Blocks.push(b);
-<<<<<<< HEAD
-  });
-=======
 
   });
 
-
-
-
->>>>>>> e9749f1aa1de31bf8375ec4101b61d3e9548b748
 }
 
 function getBlockDomain(){
@@ -197,8 +183,9 @@ function createHistogram(){
             .text(function(d) { return formatCount(d.length); });
 }
 
-function createBarGraph() {
 
+
+function changeTXNumGraph(){
     var svg = d3.select("svg"),
         margin = {top: 20, right: 20, bottom: 30, left: 40},
         width = +svg.attr("width") - margin.left - margin.right,
@@ -248,6 +235,12 @@ function createBarGraph() {
         .attr("height", function (d) {
             return height - y(d.numTx);
         })
+}
+
+function createBarGraph() {
+
+    getLastNBlocksRecursive(10,changeTXNumGraph);
+
 }
 
 function makeTempCSV(){
