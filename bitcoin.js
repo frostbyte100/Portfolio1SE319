@@ -35,7 +35,7 @@ function getNLastBlocks(n){
     getABlock(i);
   }
  // console.log(Blocks);
-    makeTempCSV();
+
 }
 
 

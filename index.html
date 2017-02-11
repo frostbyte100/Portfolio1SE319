@@ -19,7 +19,7 @@
        }
 
    </style>
-      <button onclick="getNLastBlocks(10)">Test API Call</button>
+      <button onclick="getNLastBlocks(10);makeTempCSV();">Test API Call</button>
       <div id="graph1"></div>
 
 
@@ -34,11 +34,7 @@
              height = 500 - margin.top - margin.bottom;
             console.log(getBlockDomain());
            var x = d3.scaleTime()
-<<<<<<< HEAD
-             .domain([new Date(2009, 0, 1), new Date(2010, 0, 1)])
-=======
              .domain(getBlockDomain())
->>>>>>> 0cf50bb96595b7ce4f3582ab37c2215c89eb7953
              .rangeRound([0, width]);
 
            var y = d3.scaleLinear()
