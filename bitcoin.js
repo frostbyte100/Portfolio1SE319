@@ -32,11 +32,12 @@ function getNFirstBlocks(n){
 
 
 function getNLastBlocks(n){
-  var i=n;
-  for(i=n;i>0;i--){
+  var i=0;
+  for(i=lastBlockNum;i>lastBlockNum-n;i--){
     getABlock(i);
   }
-  console.log(Blocks);
+ // console.log(Blocks);
+    makeTempCSV();
 }
 
 
@@ -52,11 +53,28 @@ function getABlock(n){
 
 }
 
-
+function getBlockDomain(){
+    var x = new Array();
+    if(Blocks.length!=0) {
+        x.push(Blocks[0]);
+        x.push(Blocks[Blocks.length - 1]);
+        return x;
+    }
+}
 
 function getTx(txString){
 
   $.getJSON("http://btc.blockr.io/api/v1/tx/info/"+txString, function(data){
 
   });
+}
+
+
+function makeTempCSV(){
+    var str = "id,case,date\n";
+    for(var x=0;x<Blocks.length;x++){
+        str += Blocks[x].id + ","+Blocks[x].case+","+Blocks[x].date+"\n";
+    }
+    console.log(str);
+
 }
