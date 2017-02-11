@@ -16,17 +16,25 @@
 
    <style>
 
-       .bar rect {
+       .bar {
            fill: steelblue;
        }
 
-       .bar text {
-           fill: #fff;
-           font: 10px sans-serif;
+       .bar:hover {
+           fill: brown;
+       }
+
+       .axis--x path {
+           display: none;
        }
 
    </style>
+
       <button onclick="createHistogram()">Number of Blocks Over Time</button>
       <div id="graph1"></div>
+      <button onclick="getLastNBlocksRecursive(10);">Test API Call</button>
+      <button onclick="createBarGraph()">CreateBarGraph</button>
+      <svg width="960" height="500"></svg>
+
    </body>
 </html>

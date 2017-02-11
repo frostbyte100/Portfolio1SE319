@@ -1,16 +1,16 @@
   'use strict';
 
-var transactions = new Array();
+var transactions = [];
 var exchangeRate;
 var lastBlockNum;
 
 function Block(blockNum, numTx, date) {
     this.id = blockNum;
-    this.case = numTx;
+    this.numTx = numTx;
     this.date = date;
 }
 
-var Blocks = new Array();
+var Blocks = [];
 
 window.onload = new function(){
     $.ajax({
@@ -19,21 +19,52 @@ window.onload = new function(){
         dataType: "json",
         success: function (data) {
             lastBlockNum = data["data"]["height"];
+            console.log(lastBlockNum);
+            $.ajax({
+                url: 'http://btc.blockr.io/api/v1/exchangerate/current',
+                type: "GET",
+                dataType: "json",
+                success: function (data) {
+
+                    exchangeRate = data["data"][0]["rates"]["BTC"];
+                    console.log(exchangeRate);
+                },
+                error: function(data){
+                    console.log(data);
+                    alert("We have made too many requests to the API. Wait a while before making another call.");
+                }
+            });
         },
         error: function(data){
             console.log(data);
+<<<<<<< HEAD
+=======
+           alert("We have made too many requests to the API. Wait a while before making another call.");
+>>>>>>> e9749f1aa1de31bf8375ec4101b61d3e9548b748
         }
     });
+
+
+};
+
+function getLastNBlocksRecursive(n){
     $.ajax({
-        url: 'http://btc.blockr.io/api/v1/exchangerate/current',
+        url: "http://btc.blockr.io/api/v1/block/raw/"+ (lastBlockNum-n),
         type: "GET",
         dataType: "json",
         success: function (data) {
+            Blocks.push( new Block(n, data["data"]["tx"].length, new Date( parseInt(data["data"]["time"])*1000 )));
 
-            lastBlockNum = data["data"]["height"];
+            if(n!=1){
+                getLastNBlocksRecursive(n-1);
+            }
+            if(n==1){
+                makeTempCSV();
+            }
         },
         error: function(data){
             console.log(data);
+<<<<<<< HEAD
         }
     });
 
@@ -44,26 +75,53 @@ function getNFirstBlocks(){
   for(i=1;i<=document.getElementById("numBlocks").value;i++){
     getABlock(i);
   }
+=======
+            alert("We have made too many requests to the API. Wait a while before making another call.");
+        }
+    });
+>>>>>>> e9749f1aa1de31bf8375ec4101b61d3e9548b748
 }
+  function getNFirstBlocksRecursive(n,start){
+      $.ajax({
+          url: "http://btc.blockr.io/api/v1/block/raw/"+start,
+          type: "GET",
+          dataType: "json",
+          success: function (data) {
+              Blocks.push( new Block(n, data["data"]["tx"].length, new Date( parseInt(data["data"]["time"])*1000 )));
 
-function getNLastBlocks(n){
-  var i=0;
-  for(i=lastBlockNum;i>lastBlockNum-n;i--){
-    getABlock(i);
-
+              if(start!=n){
+                  getNFirstBlocksRecursive(n,start+1);
+              }
+              if(start==n){
+                  makeTempCSV();
+              }
+          },
+          error: function(data){
+              console.log(data);
+              alert("We have made too many requests to the API. Wait a while before making another call.");
+          }
+      });
   }
 
-}
 
 function getABlock(n){
   $.getJSON("http://btc.blockr.io/api/v1/block/raw/"+n, function(data){
     var b = new Block(n, data["data"]["tx"].length, new Date( parseInt(data["data"]["time"])*1000 ));
     Blocks.push(b);
+<<<<<<< HEAD
   });
+=======
+
+  });
+
+
+
+
+>>>>>>> e9749f1aa1de31bf8375ec4101b61d3e9548b748
 }
 
 function getBlockDomain(){
-    var x = new Array();
+    var x = [];
     if(Blocks.length!=0 || Blocks.length != 1) {
         if(Blocks[0].date < Blocks[Blocks.length-1].date){
             x.push(Blocks[0].date);
@@ -137,5 +195,65 @@ function createHistogram(){
             .attr("x", function(d) { return (x(d.x1) - x(d.x0)) / 2; })
             .attr("text-anchor", "middle")
             .text(function(d) { return formatCount(d.length); });
+}
 
+function createBarGraph() {
+
+    var svg = d3.select("svg"),
+        margin = {top: 20, right: 20, bottom: 30, left: 40},
+        width = +svg.attr("width") - margin.left - margin.right,
+        height = +svg.attr("height") - margin.top - margin.bottom;
+
+    var x = d3.scaleBand().rangeRound([0, width]).padding(0.1),
+        y = d3.scaleLinear().rangeRound([height, 0]);
+
+    var g = svg.append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    var data = Blocks;
+    x.domain(data.map(function (d) {
+        d.date;
+    }));
+    y.domain([0, d3.max(data, function (d) {
+        return d.numTx;
+    })]);
+
+    g.append("g")
+        .attr("class", "axis axis--x")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(x));
+
+    g.append("g")
+        .attr("class", "axis axis--y")
+        .call(d3.axisLeft(y).ticks(70, ""))
+        .append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 6)
+        .attr("dy", "0.71em")
+        .attr("text-anchor", "end")
+        .text("Frequency");
+
+
+    g.selectAll(".bar")
+        .data(data)
+        .enter().append("rect")
+        .attr("class", "bar")
+        .attr("x", function (d) {
+            return x(d.date);
+        })
+        .attr("y", function (d) {
+            return y(d.numTx);
+        })
+        .attr("width", x.bandwidth())
+        .attr("height", function (d) {
+            return height - y(d.numTx);
+        })
+}
+
+function makeTempCSV(){
+    var str = "id,numTx,date\n";
+    for(var x=0;x<Blocks.length;x++){
+        str += Blocks[x].id + ","+Blocks[x].numTx+","+Blocks[x].date+"\n";
+    }
+    console.log(str);
 }
