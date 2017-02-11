@@ -1,14 +1,24 @@
   'use strict';
 
-  var transactions = new Array();
-
+var transactions = new Array();
 var exchangeRate;
-function showData(){
+var lastBlockNum;
 
+window.onload = new function(){
+  //Gets Lasts Block's NUmber
+  $.getJSON("http://btc.blockr.io/api/v1/block/raw/last", function(data){
+    lastBlockNum = data["data"]["height"];
+    console.log(lastBlockNum);
+  });
   $.getJSON("http://btc.blockr.io/api/v1/exchangerate/current", function( data ) {
-    //console.log(data);
-//    console.log(data["data"][0]["rates"]["BTC"]);
     exchangeRate = data["data"][0]["rates"]["BTC"];
-});
+  });
+}
 
+
+function getTx(txString){
+
+  $.getJSON("http://btc.blockr.io/api/v1/tx/info/"+txString, function(data){
+
+  });
 }
