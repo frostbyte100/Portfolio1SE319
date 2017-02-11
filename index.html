@@ -22,7 +22,7 @@
              height = 500 - margin.top - margin.bottom;
 
            var x = d3.scaleTime()
-             .domain([new Date(2015, 0, 1), new Date(2016, 0, 1)])
+             .domain([new Date(2009, 0, 1), new Date(2010, 0, 1)])
              .rangeRound([0, width]);
 
            var y = d3.scaleLinear()
@@ -51,8 +51,6 @@
                  .enter().append("g")
                  .attr("class", "bar")
                  .attr("transform", function(d) { return "translate(" + x(d.x0) + "," + y(d.length) + ")"; });
-
-
 
              bar.append("rect")
                  .attr("x", 1)

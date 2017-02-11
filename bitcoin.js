@@ -16,7 +16,6 @@ window.onload = new function(){
   //Gets Lasts Block's NUmber
   $.getJSON("http://btc.blockr.io/api/v1/block/raw/last", function(data){
     lastBlockNum = data["data"]["height"];
-    //console.log(data);
   });
   $.getJSON("http://btc.blockr.io/api/v1/exchangerate/current", function( data ) {
     exchangeRate = data["data"][0]["rates"]["BTC"];
@@ -29,7 +28,6 @@ function getNFirstBlocks(n){
     getABlock(i);
   }
 }
-
 
 function getNLastBlocks(n){
   var i=n;
