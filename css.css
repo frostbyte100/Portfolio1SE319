@@ -11,4 +11,11 @@
     display: none;
 }
 
-l
+svg{
+    margin-top: 20px;
+    margin-right: 20px;
+    margin-left: 40px;
+    margin-bottom: 30px;
+    width: 960px;
+    height: 500px;
+}

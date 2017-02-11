@@ -191,6 +191,10 @@ function changeTXNumGraph(){
         width = +svg.attr("width") - margin.left - margin.right,
         height = +svg.attr("height") - margin.top - margin.bottom;
 
+    var svg = d3.select("body").append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+
     var x = d3.scaleBand().rangeRound([0, width]).padding(0.1),
         y = d3.scaleLinear().rangeRound([height, 0]);
 
@@ -199,7 +203,7 @@ function changeTXNumGraph(){
 
     var data = Blocks;
     x.domain(data.map(function (d) {
-        d.date;
+        d.id;
     }));
     y.domain([0, d3.max(data, function (d) {
         return d.numTx;
@@ -212,7 +216,7 @@ function changeTXNumGraph(){
 
     g.append("g")
         .attr("class", "axis axis--y")
-        .call(d3.axisLeft(y).ticks(70, ""))
+        .call(d3.axisLeft(y).ticks(100, ""))
         .append("text")
         .attr("transform", "rotate(-90)")
         .attr("y", 6)
@@ -226,7 +230,7 @@ function changeTXNumGraph(){
         .enter().append("rect")
         .attr("class", "bar")
         .attr("x", function (d) {
-            return x(d.date);
+            return x(d.id);
         })
         .attr("y", function (d) {
             return y(d.numTx);
@@ -239,7 +243,7 @@ function changeTXNumGraph(){
 
 function createBarGraph() {
 
-    getLastNBlocksRecursive(10,changeTXNumGraph);
+    getLastNBlocksRecursive(10);
 
 }
 
