@@ -5,8 +5,8 @@ var exchangeRate;
 var lastBlockNum;
 
 function Block(blockNum, numTx, date) {
-    this.blockNum = blockNum;
-    this.numTx = numTx;
+    this.id = blockNum;
+    this.case = numTx;
     this.date = date;
 }
 
@@ -36,16 +36,16 @@ function getNLastBlocks(n){
   for(i=n;i>0;i--){
     getABlock(i);
   }
+  console.log(Blocks);
 }
 
 
 function getABlock(n){
   $.getJSON("http://btc.blockr.io/api/v1/block/raw/"+n, function(data){
     //lastBlockNum = data["data"]["height"];
-    console.log(data["data"]["tx"].length);
-    console.log(new Date( parseInt(data["data"]["time"])*1000 ));
-    console.log(new Date(data["data"]["time"]).getYear() );
-    var b = new Block(n,data["data"]["tx"].length,new Date( parseInt(data["data"]["time"])*1000 ));
+
+
+    var b = new Block(n, data["data"]["tx"].length, new Date( parseInt(data["data"]["time"])*1000 ));
     Blocks.push(b);
   });
 
