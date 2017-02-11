@@ -53,11 +53,20 @@ function getABlock(n){
 
 function getBlockDomain(){
     var x = new Array();
-    if(Blocks.length!=0) {
-        x.push(Blocks[0]);
-        x.push(Blocks[Blocks.length - 1]);
+    if(Blocks.length!=0 || Blocks.length != 1) {
+        if(Blocks[0].date < Blocks[blocks.length - 1]){
+            x.push(Blocks[0]);
+            x.push(Blocks[Blocks.length - 1]);
+        }
+        else{
+            x.push(Blocks[Blocks.length - 1]);
+            x.push(Blocks[0]);
+        }
         return x;
     }
+
+
+
 }
 
 function getTx(txString){
