@@ -7,7 +7,19 @@
       <script  src="bitcoin.js"></script>
    </head>
    <body>
-      <button onclick="getNLastBlocks(2)">Test API Call</button>
+   <style>
+
+       .bar rect {
+           fill: steelblue;
+       }
+
+       .bar text {
+           fill: #fff;
+           font: 10px sans-serif;
+       }
+
+   </style>
+      <button onclick="getNLastBlocks(10)">Test API Call</button>
       <div id="graph1"></div>
 
 
@@ -20,9 +32,13 @@
            var margin = {top: 10, right: 30, bottom: 30, left: 30},
              width = 960 - margin.left - margin.right,
              height = 500 - margin.top - margin.bottom;
-
+            console.log(getBlockDomain());
            var x = d3.scaleTime()
+<<<<<<< HEAD
              .domain([new Date(2009, 0, 1), new Date(2010, 0, 1)])
+=======
+             .domain(getBlockDomain())
+>>>>>>> 0cf50bb96595b7ce4f3582ab37c2215c89eb7953
              .rangeRound([0, width]);
 
            var y = d3.scaleLinear()
@@ -44,6 +60,7 @@
              .attr("transform", "translate(0," + height + ")")
              .call(d3.axisBottom(x));
 
+           console.log(Blocks);
            var bins = histogram(Blocks);
            y.domain([0, d3.max(bins, function(d) { return d.length; })]);
              var bar = svg.selectAll(".bar")
