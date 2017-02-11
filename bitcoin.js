@@ -13,27 +13,46 @@ function Block(blockNum, numTx, date) {
 var Blocks = new Array();
 
 window.onload = new function(){
-  //Gets Lasts Block's NUmber
-  $.getJSON("http://btc.blockr.io/api/v1/block/raw/last", function(data){
-    lastBlockNum = data["data"]["height"];
-  });
-  $.getJSON("http://btc.blockr.io/api/v1/exchangerate/current", function( data ) {
-    exchangeRate = data["data"][0]["rates"]["BTC"];
-  });
+    $.ajax({
+        url: 'http://btc.blockr.io/api/v1/block/raw/last',
+        type: "GET",
+        dataType: "json",
+        success: function (data) {
+            lastBlockNum = data["data"]["height"];
+        },
+        error: function(data){
+            console.log(data);
+           // alert(data["message"]);
+        }
+    });
+    $.ajax({
+        url: 'http://btc.blockr.io/api/v1/exchangerate/current',
+        type: "GET",
+        dataType: "json",
+        success: function (data) {
+
+            lastBlockNum = data["data"]["height"];
+        },
+        error: function(data){
+            console.log(data);
+//            alert(data["message"]);
+        }
+    });
+
 }
 
 function getNFirstBlocks(n){
   var i=0;
-  for(i=0;i<n;i++){
+  for(i=1;i<=n;i++){
     getABlock(i);
-  }
+  }makeTempCSV();
 }
 
 function getNLastBlocks(n){
   var i=0;
   for(i=lastBlockNum;i>lastBlockNum-n;i--){
     getABlock(i);
-  }
+  }makeTempCSV();
  // console.log(Blocks);
 
 }
@@ -54,13 +73,13 @@ function getABlock(n){
 function getBlockDomain(){
     var x = new Array();
     if(Blocks.length!=0 || Blocks.length != 1) {
-        if(Blocks[0].date < Blocks[blocks.length - 1]){
-            x.push(Blocks[0]);
-            x.push(Blocks[Blocks.length - 1]);
+        if(Blocks[0].date < Blocks[Blocks.length - 1]){
+            x.push(Blocks[0].date);
+            x.push(Blocks[Blocks.length - 1].date);
         }
         else{
-            x.push(Blocks[Blocks.length - 1]);
-            x.push(Blocks[0]);
+            x.push(Blocks[Blocks.length - 1].date);
+            x.push(Blocks[0].date);
         }
         return x;
     }
