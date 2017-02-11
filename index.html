@@ -63,7 +63,7 @@
                  .data(bins)
                  .enter().append("g")
                  .attr("class", "bar")
-                 .attr("transform", function(d) { return "translate(" + x(d.x0) + "," + y(d.length) + ")"; });
+                 .attr("transform", function(d) { return "translate(" + x(d.x0) + "," + y(d.case) + ")"; });
 
              bar.append("rect")
                  .attr("x", 1)
@@ -75,7 +75,7 @@
                  .attr("y", 6)
                  .attr("x", function(d) { return (x(d.x1) - x(d.x0)) / 2; })
                  .attr("text-anchor", "middle")
-                 .text(function(d) { return formatCount(d.length); });
+                 .text(function(d) { return formatCount(d.case); });
 
 
 
