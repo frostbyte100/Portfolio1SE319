@@ -45,14 +45,16 @@ function getNFirstBlocks(n){
   var i=0;
   for(i=1;i<=n;i++){
     getABlock(i);
-  }makeTempCSV();
+      makeTempCSV();
+  }
 }
 
 function getNLastBlocks(n){
   var i=0;
   for(i=lastBlockNum;i>lastBlockNum-n;i--){
     getABlock(i);
-  }makeTempCSV();
+
+  }
  // console.log(Blocks);
 
 }
@@ -65,6 +67,7 @@ function getABlock(n){
 
     var b = new Block(n, data["data"]["tx"].length, new Date( parseInt(data["data"]["time"])*1000 ));
     Blocks.push(b);
+      makeTempCSV();
   });
 
 

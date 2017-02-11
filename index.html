@@ -43,7 +43,7 @@
            var histogram = d3.histogram()
              .value(function(d) { return d.date; })
              .domain(x.domain())
-             .thresholds(x.ticks(d3.timeWeek));
+             .thresholds(x.ticks(d3.timeHour));
 
            var svg = d3.select("body").append("svg")
              .attr("width", width + margin.left + margin.right)
