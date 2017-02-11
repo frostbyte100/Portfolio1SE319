@@ -1,16 +1,16 @@
   'use strict';
 
-var transactions = new Array();
+var transactions = [];
 var exchangeRate;
 var lastBlockNum;
 
 function Block(blockNum, numTx, date) {
     this.id = blockNum;
-    this.case = numTx;
+    this.numTx = numTx;
     this.date = date;
 }
 
-var Blocks = new Array();
+var Blocks = [];
 
 window.onload = new function(){
     $.ajax({
@@ -19,45 +19,74 @@ window.onload = new function(){
         dataType: "json",
         success: function (data) {
             lastBlockNum = data["data"]["height"];
+            console.log(lastBlockNum);
+            $.ajax({
+                url: 'http://btc.blockr.io/api/v1/exchangerate/current',
+                type: "GET",
+                dataType: "json",
+                success: function (data) {
+
+                    exchangeRate = data["data"][0]["rates"]["BTC"];
+                    console.log(exchangeRate);
+                },
+                error: function(data){
+                    console.log(data);
+                    alert("We have made too many requests to the API. Wait a while before making another call.");
+                }
+            });
         },
         error: function(data){
             console.log(data);
-           // alert(data["message"]);
+           alert("We have made too many requests to the API. Wait a while before making another call.");
         }
     });
+
+
+};
+
+function getLastNBlocksRecursive(n){
     $.ajax({
-        url: 'http://btc.blockr.io/api/v1/exchangerate/current',
+        url: "http://btc.blockr.io/api/v1/block/raw/"+ (lastBlockNum-n),
         type: "GET",
         dataType: "json",
         success: function (data) {
+            Blocks.push( new Block(n, data["data"]["tx"].length, new Date( parseInt(data["data"]["time"])*1000 )));
 
-            lastBlockNum = data["data"]["height"];
+            if(n!=1){
+                getLastNBlocksRecursive(n-1);
+            }
+            if(n==1){
+                makeTempCSV();
+            }
         },
         error: function(data){
             console.log(data);
-//            alert(data["message"]);
+            alert("We have made too many requests to the API. Wait a while before making another call.");
         }
     });
-
 }
+  function getNFirstBlocksRecursive(n,start){
+      $.ajax({
+          url: "http://btc.blockr.io/api/v1/block/raw/"+start,
+          type: "GET",
+          dataType: "json",
+          success: function (data) {
+              Blocks.push( new Block(n, data["data"]["tx"].length, new Date( parseInt(data["data"]["time"])*1000 )));
 
-function getNFirstBlocks(n){
-  var i=0;
-  for(i=1;i<=n;i++){
-    getABlock(i);
-      makeTempCSV();
+              if(start!=n){
+                  getNFirstBlocksRecursive(n,start+1);
+              }
+              if(start==n){
+                  makeTempCSV();
+              }
+          },
+          error: function(data){
+              console.log(data);
+              alert("We have made too many requests to the API. Wait a while before making another call.");
+          }
+      });
   }
-}
 
-function getNLastBlocks(n){
-  var i=0;
-  for(i=lastBlockNum;i>lastBlockNum-n;i--){
-    getABlock(i);
-
-  }
- // console.log(Blocks);
-
-}
 
 
 function getABlock(n){
@@ -67,16 +96,18 @@ function getABlock(n){
 
     var b = new Block(n, data["data"]["tx"].length, new Date( parseInt(data["data"]["time"])*1000 ));
     Blocks.push(b);
-      makeTempCSV();
+
   });
+
+
 
 
 }
 
 function getBlockDomain(){
-    var x = new Array();
+    var x = [];
     if(Blocks.length!=0 || Blocks.length != 1) {
-        if(Blocks[0].date < Blocks[Blocks.length - 1]){
+        if(Blocks[0].date < Blocks[Blocks.length - 1].date){
             x.push(Blocks[0].date);
             x.push(Blocks[Blocks.length - 1].date);
         }
@@ -100,10 +131,9 @@ function getTx(txString){
 
 
 function makeTempCSV(){
-    var str = "id,case,date\n";
+    var str = "id,numTx,date\n";
     for(var x=0;x<Blocks.length;x++){
-        str += Blocks[x].id + ","+Blocks[x].case+","+Blocks[x].date+"\n";
+        str += Blocks[x].id + ","+Blocks[x].numTx+","+Blocks[x].date+"\n";
     }
     console.log(str);
-
 }
