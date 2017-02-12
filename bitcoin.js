@@ -44,7 +44,15 @@ window.onload = new function(){
 
 };
 
+function clearSVG(){
+
+    $( "body" ).find( "svg").remove();
+}
+
+
 function getLastNBlocksRecursive(n){
+
+    $("#loading").show();
     $.ajax({
         url: "http://btc.blockr.io/api/v1/block/raw/"+ (lastBlockNum-n),
         type: "GET",
@@ -56,6 +64,8 @@ function getLastNBlocksRecursive(n){
                 getLastNBlocksRecursive(n-1);
             }
             if(n==1){
+
+                $("#loading").hide();
                 makeTempCSV();
                 changeTXNumGraph();
             }
@@ -74,6 +84,7 @@ function getNFirstBlocks(){
   }
 }
   function getNFirstBlocksRecursive(n,start){
+    $("#loading").show();
       $.ajax({
           url: "http://btc.blockr.io/api/v1/block/raw/"+start,
           type: "GET",
@@ -87,6 +98,7 @@ function getNFirstBlocks(){
               if(start==n){
                   makeTempCSV();
                   changeTXNumGraph();
+                  $("#loading").hide();
               }
           },
           error: function(data){
