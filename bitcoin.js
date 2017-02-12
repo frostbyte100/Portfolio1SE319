@@ -4,8 +4,7 @@ var transactions = [];
 var exchangeRate;
 var lastBlockNum;
 
-function Block(blockNum, numTx, date) {
-    this.id = blockNum;
+function Block(numTx, date) {
     this.numTx = numTx;
     this.date = date;
 }
@@ -26,6 +25,9 @@ window.onload = new function(){
                 success: function (data) {
 
                     exchangeRate = data["data"][0]["rates"]["BTC"];
+                    console.log(lastBlockNum);
+                    console.log(exchangeRate);
+
                 },
                 error: function(data){
                     console.log(data);
@@ -50,13 +52,12 @@ function clearSVG(){
 
 function getLastNBlocksRecursive(n){
 
-    $("#loading").show();
     $.ajax({
         url: "http://btc.blockr.io/api/v1/block/raw/"+ (lastBlockNum-n),
         type: "GET",
         dataType: "json",
         success: function (data) {
-            Blocks.push( new Block(n, data["data"]["tx"].length, new Date( parseInt(data["data"]["time"])*1000 )));
+            Blocks.push( new Block( data["data"]["tx"].length, new Date( parseInt(data["data"]["time"])*1000 )));
 
             if(n!=1){
                 getLastNBlocksRecursive(n-1);
@@ -65,24 +66,27 @@ function getLastNBlocksRecursive(n){
 
                 $("#loading").hide();
                 makeTempCSV();
-                makeHistogram();
+                //makeHistogram();
                 changeTXNumGraph();
             }
         },
         error: function(data){
             console.log(data);
             alert("We have made too many requests to the API. Wait a while before making another call.");
-
         }
     });
 
 }
 
 function getFirstBlocks(){
+    clearSVG();
+    $("#loading").css("visibility","visible");
     getNFirstBlocksRecursive(document.getElementById("numBlocks").value, 1);
 }
 
 function getLastBlocks(){
+    clearSVG();
+    $("#loading").css("visibility","visible");
     getLastNBlocksRecursive(document.getElementById("numBlocks").value);
 }
 
@@ -94,7 +98,7 @@ function getLastBlocks(){
           type: "GET",
           dataType: "json",
           success: function (data) {
-              Blocks.push( new Block(n, data["data"]["tx"].length, new Date( parseInt(data["data"]["time"])*1000 )));
+              Blocks.push( new Block(data["data"]["tx"].length, new Date( parseInt(data["data"]["time"])*1000 )));
 
               if(start!=n){
                   getNFirstBlocksRecursive(n,start+1);
@@ -102,7 +106,7 @@ function getLastBlocks(){
               if(start==n){
                   $("#loading").hide();
                   makeTempCSV();
-                  createHistogram();
+                  //createHistogram();
                   changeTXNumGraph();
               }
           },
@@ -113,11 +117,19 @@ function getLastBlocks(){
       });
 }
 
-function getABlock(n){
-  $.getJSON("http://btc.blockr.io/api/v1/block/raw/"+n, function(data){
-    var b = new Block(n, data["data"]["tx"].length, new Date( parseInt(data["data"]["time"])*1000 ));
-    Blocks.push(b);
-    });
+function getTxRange(){
+      var lowest = Number.MAX_SAFE_INTEGER;
+      var highest = Number.MIN_VALUE;
+      for(var x=0;x<Blocks.length;x++){
+          if(Blocks[x].numTx > highest){
+              highest = Blocks[x];
+          }
+          if(Blocks[x].numTx < lowest){
+              lowest = Blocks[x];
+          }
+      }
+
+      return [Math.max(0,lowest-100),highest+100    ];
 }
 
 function getBlockDomain(){
@@ -196,9 +208,16 @@ function createHistogram(){
 
 function changeTXNumGraph(){
 
+    var margin = {top: 10, right: 30, bottom: 30, left: 30},
+        width = 960 - margin.left - margin.right,
+        height = 500 - margin.top - margin.bottom,
+        padding = 100;
+
     var svg = d3.select("body").append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
+
+
 
     var x = d3.scaleBand().rangeRound([0, width]).padding(0.1),
         y = d3.scaleLinear().rangeRound([height, 0]);
@@ -207,21 +226,18 @@ function changeTXNumGraph(){
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     var data = Blocks;
-    x.domain(data.map(function (d) {
-        d.id;
-    }));
-    y.domain([0, d3.max(data, function (d) {
-        return d.numTx;
-    })]);
+    x.domain(getBlockDomain());
+
+    y.domain(getTxRange());
 
     g.append("g")
         .attr("class", "axis axis--x")
         .attr("transform", "translate(0," + height + ")")
-        .call(d3.axisBottom(x));
+        .call(d3.axisBottom(x).ticks(Blocks.length));
 
     g.append("g")
         .attr("class", "axis axis--y")
-        .call(d3.axisLeft(y).ticks(100, ""))
+        .call(d3.axisLeft(y).ticks(20))
         .append("text")
         .attr("transform", "rotate(-90)")
         .attr("y", 6)
@@ -229,13 +245,14 @@ function changeTXNumGraph(){
         .attr("text-anchor", "end")
         .text("Frequency");
 
+    console.log(Blocks);
 
     g.selectAll(".bar")
         .data(data)
         .enter().append("rect")
         .attr("class", "bar")
         .attr("x", function (d) {
-            return x(d.id);
+            return x(d.date.toISOString().slice(0, 10));
         })
         .attr("y", function (d) {
             return y(d.numTx);
@@ -249,7 +266,7 @@ function changeTXNumGraph(){
 function makeTempCSV(){
     var str = "id,numTx,date\n";
     for(var x=0;x<Blocks.length;x++){
-        str += Blocks[x].id + ","+Blocks[x].numTx+","+Blocks[x].date+"\n";
+        str += x + ","+Blocks[x].numTx+","+Blocks[x].date+"\n";
     }
     console.log(str);
 }
