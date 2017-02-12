@@ -4,6 +4,20 @@ var transactions = [];
 var exchangeRate;
 var lastBlockNum;
 
+var month = new Array();
+month[0] = "January";
+month[1] = "February";
+month[2] = "March";
+month[3] = "April";
+month[4] = "May";
+month[5] = "June";
+month[6] = "July";
+month[7] = "August";
+month[8] = "September";
+month[9] = "October";
+month[10] = "November";
+month[11] = "December";
+
 function Block(numTx, date) {
     this.numTx = numTx;
     this.date = date;
@@ -67,8 +81,8 @@ function getLastNBlocksRecursive(n){
 
                 $("#loading").hide();
                 makeTempCSV();
-                //makeHistogram();
-                changeTXNumGraph();
+                makeHistogram();
+                //changeTXNumGraph();
 
             }
         },
@@ -107,8 +121,8 @@ function getLastBlocks(){
               if(start==n){
                   $("#loading").hide();
                   makeTempCSV();
-                  //createHistogram();
-                  changeTXNumGraph();
+                  createHistogram();
+                  //changeTXNumGraph();
               }
           },
           error: function(data){
@@ -193,6 +207,13 @@ function createHistogram(){
         .attr("class", "axis axis--x")
         .attr("transform", "translate(0," + height + ")")
         .call(d3.axisBottom(x));
+
+    svg.append("text")
+        .attr("class", "x label")
+        .attr("text-anchor", "end")
+        .attr("x", width/2)
+        .attr("y", 10)
+        .text(month[Blocks[0].date.getMonth()] + " " + Blocks[0].date.getFullYear());
 
     var bins = histogram(Blocks);
     y.domain([0, d3.max(bins, function(d) { return d.length; })]);
