@@ -129,8 +129,9 @@ function getTxRange(){
               lowest = Blocks[x];
           }
       }
-
-      return [Math.max(0,lowest-100),highest+100    ];
+      var x = [];
+      x.push(Math.max(0,lowest-100),highest+100);
+      return x;
 }
 
 function getBlockDomain(){
@@ -139,9 +140,6 @@ function getBlockDomain(){
     if(Blocks.length!=0 || Blocks.length != 1) {
         var d1 = new Date(Blocks[0].date);
         var d2 = new Date(Blocks[Blocks.length-1].date);
-        console.log(d1);
-        console.log(d2);
-
 
         if(d1 < d2){
             x.push(d1);
@@ -154,8 +152,6 @@ function getBlockDomain(){
 
         x[0].setHours(x[0].getHours() - 1);
         x[1].setHours(x[1].getHours() + 1);
-
-        console.log(x);
 
         return x;
     }
@@ -229,7 +225,7 @@ function changeTXNumGraph(){
 
 
     var x = d3.scaleBand().rangeRound([0, width]).padding(0.1),
-        y = d3.scaleLinear().rangeRound([height, 0]);
+        y = d3.scaleOrdinal();
 
     var g = svg.append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -252,9 +248,9 @@ function changeTXNumGraph(){
         .attr("y", 6)
         .attr("dy", "0.71em")
         .attr("text-anchor", "end")
-        .text("Frequency");
+        .text("Number of Transactions");
 
-    console.log(Blocks);
+
 
     g.selectAll(".bar")
         .data(data)
@@ -266,9 +262,9 @@ function changeTXNumGraph(){
         .attr("y", function (d) {
             return y(d.numTx);
         })
-        .attr("width", x.bandwidth())
+        //.attr("width", x.bandwidth())
         .attr("height", function (d) {
-            return height - y(d.numTx);
+            return height - y(d.length);
         })
 }
 
