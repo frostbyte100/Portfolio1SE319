@@ -20,6 +20,6 @@ svg{
     height: 500px;
 }
 
-loading{
-    display: none;
+#loading{
+    visibility: hidden;
 }
