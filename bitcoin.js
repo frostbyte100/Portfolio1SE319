@@ -79,10 +79,10 @@ function getLastNBlocksRecursive(n){
             }
             if(n==1){
 
-                $("#loading").hide();
+                $("#loading").css("visibility","hidden");
                 makeTempCSV();
-                makeHistogram();
-                //changeTXNumGraph();
+                //makeHistogram();
+                changeTXNumGraph();
 
             }
         },
@@ -102,7 +102,7 @@ function getFirstBlocks(){
 
 function getLastBlocks(){
     clearSVG();
-    ("#loading").css("visibility","visible");
+    $("#loading").css("visibility","visible");
     getLastNBlocksRecursive(document.getElementById("numBlocks").value);
 }
 
@@ -119,10 +119,10 @@ function getLastBlocks(){
                   getNFirstBlocksRecursive(n,start+1);
               }
               if(start==n){
-                  $("#loading").hide();
+                  $("#loading").css("visibility","hidden");
                   makeTempCSV();
-                  createHistogram();
-                  //changeTXNumGraph();
+                  //createHistogram();
+                  changeTXNumGraph();
               }
           },
           error: function(data){
