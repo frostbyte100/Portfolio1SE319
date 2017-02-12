@@ -8,6 +8,11 @@
 }
 
 
+.bar text{
+    fill: #fff;
+    font: 12px sans-serif;
+}
+
 svg{
     margin-top: 20px;
     margin-right: 20px;
@@ -22,4 +27,3 @@ svg{
 #loading{
     visibility: hidden;
 }
-
