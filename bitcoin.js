@@ -42,7 +42,15 @@ window.onload = new function(){
 
 };
 
+function clearSVG(){
+
+    $( "body" ).find( "svg").remove();
+}
+
+
 function getLastNBlocksRecursive(n){
+
+    $("#loading").show();
     $.ajax({
         url: "http://btc.blockr.io/api/v1/block/raw/"+ (lastBlockNum-n),
         type: "GET",
@@ -54,13 +62,17 @@ function getLastNBlocksRecursive(n){
                 getLastNBlocksRecursive(n-1);
             }
             if(n==1){
+
+                $("#loading").hide();
                 makeTempCSV();
                 makeHistogram();
+                changeTXNumGraph();
             }
         },
         error: function(data){
             console.log(data);
             alert("We have made too many requests to the API. Wait a while before making another call.");
+
         }
     });
 
@@ -75,7 +87,8 @@ function getLastBlocks(){
 }
 
 
-function getNFirstBlocksRecursive(n,start){
+  function getNFirstBlocksRecursive(n,start){
+    $("#loading").show();
       $.ajax({
           url: "http://btc.blockr.io/api/v1/block/raw/"+start,
           type: "GET",
@@ -87,8 +100,10 @@ function getNFirstBlocksRecursive(n,start){
                   getNFirstBlocksRecursive(n,start+1);
               }
               if(start==n){
+                  $("#loading").hide();
                   makeTempCSV();
                   createHistogram();
+                  changeTXNumGraph();
               }
           },
           error: function(data){
@@ -102,8 +117,7 @@ function getABlock(n){
   $.getJSON("http://btc.blockr.io/api/v1/block/raw/"+n, function(data){
     var b = new Block(n, data["data"]["tx"].length, new Date( parseInt(data["data"]["time"])*1000 ));
     Blocks.push(b);
-  });
-
+    });
 }
 
 function getBlockDomain(){
@@ -180,12 +194,11 @@ function createHistogram(){
             .text(function(d) { return formatCount(d.length); });
 }
 
-function createBarGraph() {
+function changeTXNumGraph(){
 
     var svg = d3.select("body").append("svg")
-        margin = {top: 20, right: 20, bottom: 30, left: 40},
-        width = +svg.attr("width") - margin.left - margin.right,
-        height = +svg.attr("height") - margin.top - margin.bottom;
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
 
     var x = d3.scaleBand().rangeRound([0, width]).padding(0.1),
         y = d3.scaleLinear().rangeRound([height, 0]);
@@ -195,7 +208,7 @@ function createBarGraph() {
 
     var data = Blocks;
     x.domain(data.map(function (d) {
-        d.date;
+        d.id;
     }));
     y.domain([0, d3.max(data, function (d) {
         return d.numTx;
@@ -208,7 +221,7 @@ function createBarGraph() {
 
     g.append("g")
         .attr("class", "axis axis--y")
-        .call(d3.axisLeft(y).ticks(70, ""))
+        .call(d3.axisLeft(y).ticks(100, ""))
         .append("text")
         .attr("transform", "rotate(-90)")
         .attr("y", 6)
@@ -222,7 +235,7 @@ function createBarGraph() {
         .enter().append("rect")
         .attr("class", "bar")
         .attr("x", function (d) {
-            return x(d.date);
+            return x(d.id);
         })
         .attr("y", function (d) {
             return y(d.numTx);
