@@ -8,33 +8,31 @@
    </head>
    <body>
        <h1>Bitcoin Block Analysis</h1>
-
        <form>
-            Number of Blocks <input type="text" id="numBlocks"><br>
-            <input type ="button" value="Submit" onclick="getNFirstBlocks()"><br><br>
+            Number of Blocks <input type="text" id="numBlocks"><t>
+            <input type="button" value="First Blocks" onclick="getFirstBlocks()">
+            <input type="button" value="Last Blocks" onclick="getLastBlocks()">
+            <br><br>
        </form>
 
-   <style>
+      <style>
+          svg{
+              border-style: solid;
+              fill: steelblue;
+          }
 
-       .bar {
-           fill: steelblue;
-       }
+          .bar {
+              fill: steelblue;
+          }
 
-       .bar:hover {
-           fill: brown;
-       }
+          .bar:hover {
+              fill: brown;
+          }
 
-       .axis--x path {
-           display: none;
-       }
-
-   </style>
-
-      <button onclick="createHistogram()">Number of Blocks Over Time</button>
-      <div id="graph1"></div>
-      <button onclick="getLastNBlocksRecursive(10);">Test API Call</button>
-      <button onclick="createBarGraph()">CreateBarGraph</button>
-      <svg width="960" height="500"></svg>
+          .axis--x path {
+              display: none;
+          }
+      </style>
 
    </body>
 </html>
