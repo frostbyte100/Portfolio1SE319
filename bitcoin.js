@@ -45,6 +45,7 @@ window.onload = new function(){
 function clearSVG(){
 
     $( "body" ).find( "svg").remove();
+    Blocks = [];
 }
 
 
@@ -65,8 +66,8 @@ function getLastNBlocksRecursive(n){
 
                 $("#loading").hide();
                 makeTempCSV();
-                makeHistogram();
-                changeTXNumGraph();
+                createHistogram();
+                //changeTXNumGraph();
             }
         },
         error: function(data){
@@ -79,13 +80,14 @@ function getLastNBlocksRecursive(n){
 }
 
 function getFirstBlocks(){
+    clearSVG();
     getNFirstBlocksRecursive(document.getElementById("numBlocks").value, 1);
 }
 
 function getLastBlocks(){
+    clearSVG();
     getLastNBlocksRecursive(document.getElementById("numBlocks").value);
 }
-
 
   function getNFirstBlocksRecursive(n,start){
     $("#loading").show();
@@ -103,7 +105,7 @@ function getLastBlocks(){
                   $("#loading").hide();
                   makeTempCSV();
                   createHistogram();
-                  changeTXNumGraph();
+                  //changeTXNumGraph();
               }
           },
           error: function(data){
@@ -122,18 +124,27 @@ function getABlock(n){
 
 function getBlockDomain(){
     var x = [];
+
     if(Blocks.length!=0 || Blocks.length != 1) {
-        if(Blocks[0].date < Blocks[Blocks.length-1].date){
-            x.push(Blocks[0].date);
-            x.push(Blocks[Blocks.length-1].date);
+        var d1 = new Date(Blocks[0].date);
+        var d2 = new Date(Blocks[Blocks.length-1].date);
+        console.log(d1);
+        console.log(d2);
+
+
+        if(d1 < d2){
+            x.push(d1);
+            x.push(d2);
         }
         else{
-            x.push(Blocks[Blocks.length-1].date);
-            x.push(Blocks[0].date);
+            x.push(d2);
+            x.push(d1);
         }
 
-        x[0].setDate(x[0].getDate() - 1);
-        x[1].setDate(x[1].getDate() + 1);
+        x[0].setHours(x[0].getHours() - 1);
+        x[1].setHours(x[1].getHours() + 1);
+
+        console.log(x);
 
         return x;
     }
@@ -141,7 +152,6 @@ function getBlockDomain(){
 }
 
 function createHistogram(){
-    console.log(Blocks);
 
     var parseDate = d3.timeParse("%m/%d/%Y %H:%M:%S %p"),
       formatCount = d3.format(",.0f");
@@ -178,8 +188,8 @@ function createHistogram(){
         var bar = svg.selectAll(".bar")
             .data(bins)
             .enter().append("g")
-            .attr("class", "bar")
-            .attr("transform", function(d) { return "translate(" + x(d.x0) + "," + y(d.length) + ")"; });
+                .attr("class", "bar")
+                .attr("transform", function(d) { return "translate(" + x(d.x0) + "," + y(d.length) + ")"; });
 
        bar.append("rect")
             .attr("x", 1)

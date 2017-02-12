@@ -7,8 +7,9 @@
     fill: brown;
 }
 
-.axis--x path {
-    display: none;
+.bar text{
+    fill: #fff;
+    font: 12px sans-serif;
 }
 
 svg{
@@ -18,12 +19,9 @@ svg{
     margin-bottom: 30px;
     width: 960px;
     height: 500px;
-
-    border-style: solid;
-    fill: steelblue;
+    
 }
 
 #loading{
     visibility: hidden;
 }
-
