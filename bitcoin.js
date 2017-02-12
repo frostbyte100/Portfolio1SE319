@@ -81,7 +81,7 @@ function getLastNBlocksRecursive(n){
 
                 $("#loading").hide();
                 makeTempCSV();
-                makeHistogram();
+                createHistogram();
                 //changeTXNumGraph();
 
             }
@@ -102,7 +102,7 @@ function getFirstBlocks(){
 
 function getLastBlocks(){
     clearSVG();
-    ("#loading").css("visibility","visible");
+    $("#loading").css("visibility","visible");
     getLastNBlocksRecursive(document.getElementById("numBlocks").value);
 }
 
