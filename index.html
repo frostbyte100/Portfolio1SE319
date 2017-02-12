@@ -7,27 +7,17 @@
       <script  src="bitcoin.js"></script>
 
        <link href='css.css' rel='stylesheet' />
+
    </head>
    <body>
        <h1>Bitcoin Block Analysis</h1>
-
        <form>
-            Number of Blocks <input type="text" id="numBlocks"><br>
-            <input type ="button" value="Submit" onclick="getNFirstBlocks()"><br><br>
+            Number of Blocks <input type="text" id="numBlocks"><t>
+            <input type="button" value="First Blocks" onclick="getFirstBlocks()">
+            <input type="button" value="Last Blocks" onclick="getLastBlocks()">
+            <br><br>
        </form>
 
-       <button onclick="createHistogram()">Number of Blocks Over Time</button>
-
-       <!--<button onclick="getLastNBlocksRecursive(10);">Test API Call</button>-->
-       <button onclick="createBarGraph()">CreateBarGraph</button>
        <img src="balls.gif" id="loading">
-
-
-
-
-
-
-
-
    </body>
 </html>

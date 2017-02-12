@@ -19,7 +19,6 @@ window.onload = new function(){
         dataType: "json",
         success: function (data) {
             lastBlockNum = data["data"]["height"];
-            console.log(lastBlockNum);
             $.ajax({
                 url: 'http://btc.blockr.io/api/v1/exchangerate/current',
                 type: "GET",
@@ -27,7 +26,6 @@ window.onload = new function(){
                 success: function (data) {
 
                     exchangeRate = data["data"][0]["rates"]["BTC"];
-                    console.log(exchangeRate);
                 },
                 error: function(data){
                     console.log(data);
@@ -37,7 +35,7 @@ window.onload = new function(){
         },
         error: function(data){
             console.log(data);
-           alert("We have made too many requests to the API. Wait a while before making another call.");
+            alert("We have made too many requests to the API. Wait a while before making another call.");
         }
     });
 
@@ -67,22 +65,28 @@ function getLastNBlocksRecursive(n){
 
                 $("#loading").hide();
                 makeTempCSV();
+                makeHistogram();
                 changeTXNumGraph();
             }
         },
         error: function(data){
-            console.log(data);alert("We have made too many requests to the API. Wait a while before making another call.");
+            console.log(data);
+            alert("We have made too many requests to the API. Wait a while before making another call.");
+
         }
     });
 
 }
 
-function getNFirstBlocks(){
-  var i=0;
-  for(i=1;i<=document.getElementById("numBlocks").value;i++){
-    getABlock(i);
-  }
+function getFirstBlocks(){
+    getNFirstBlocksRecursive(document.getElementById("numBlocks").value, 1);
 }
+
+function getLastBlocks(){
+    getLastNBlocksRecursive(document.getElementById("numBlocks").value);
+}
+
+
   function getNFirstBlocksRecursive(n,start){
     $("#loading").show();
       $.ajax({
@@ -96,9 +100,10 @@ function getNFirstBlocks(){
                   getNFirstBlocksRecursive(n,start+1);
               }
               if(start==n){
-                  makeTempCSV();
-                  changeTXNumGraph();
                   $("#loading").hide();
+                  makeTempCSV();
+                  createHistogram();
+                  changeTXNumGraph();
               }
           },
           error: function(data){
@@ -106,16 +111,13 @@ function getNFirstBlocks(){
               alert("We have made too many requests to the API. Wait a while before making another call.");
           }
       });
-  }
-
+}
 
 function getABlock(n){
   $.getJSON("http://btc.blockr.io/api/v1/block/raw/"+n, function(data){
     var b = new Block(n, data["data"]["tx"].length, new Date( parseInt(data["data"]["time"])*1000 ));
     Blocks.push(b);
-
-  });
-
+    });
 }
 
 function getBlockDomain(){
@@ -126,14 +128,12 @@ function getBlockDomain(){
             x.push(Blocks[Blocks.length-1].date);
         }
         else{
-            x.push(Blocks[0].date);
             x.push(Blocks[Blocks.length-1].date);
+            x.push(Blocks[0].date);
         }
 
         x[0].setDate(x[0].getDate() - 1);
         x[1].setDate(x[1].getDate() + 1);
-
-        console.log(x);
 
         return x;
     }
@@ -149,7 +149,7 @@ function createHistogram(){
     var margin = {top: 10, right: 30, bottom: 30, left: 30},
         width = 960 - margin.left - margin.right,
         height = 500 - margin.top - margin.bottom;
-        console.log(getBlockDomain());
+
     var x = d3.scaleTime()
         .domain(getBlockDomain())
         .rangeRound([0, width]);
@@ -173,7 +173,6 @@ function createHistogram(){
         .attr("transform", "translate(0," + height + ")")
         .call(d3.axisBottom(x));
 
-    console.log(Blocks);
     var bins = histogram(Blocks);
     y.domain([0, d3.max(bins, function(d) { return d.length; })]);
         var bar = svg.selectAll(".bar")
@@ -195,13 +194,7 @@ function createHistogram(){
             .text(function(d) { return formatCount(d.length); });
 }
 
-
-
 function changeTXNumGraph(){
-    var svg = d3.select("svg"),
-        margin = {top: 20, right: 20, bottom: 30, left: 40},
-        width = +svg.attr("width") - margin.left - margin.right,
-        height = +svg.attr("height") - margin.top - margin.bottom;
 
     var svg = d3.select("body").append("svg")
         .attr("width", width + margin.left + margin.right)
@@ -251,12 +244,6 @@ function changeTXNumGraph(){
         .attr("height", function (d) {
             return height - y(d.numTx);
         })
-}
-
-function createBarGraph() {
-
-    getLastNBlocksRecursive(10);
-
 }
 
 function makeTempCSV(){
