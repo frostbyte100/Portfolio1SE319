@@ -1,6 +1,6 @@
 
 .bar {
-    fill: #125E8A;
+    fill: steelblue;
 }
 
 .bar:hover {
@@ -9,7 +9,7 @@
 
 .bar text{
     fill: #fff;
-    font: 30px sans-serif;
+    font: 12px sans-serif;
 }
 
 svg {
@@ -19,7 +19,6 @@ svg {
     margin-bottom: 30px;
     width: 960px;
     height: 500px;
-    background-color: #87CEEB;
 }
 
 .center {
@@ -29,12 +28,4 @@ svg {
 #loading{
     display: none;
     margin-left:auto;
-}
-
-body {
-    background-color: #87CEEB;
-}
-
-input {
-    background-color: #87CEEB;
 }
