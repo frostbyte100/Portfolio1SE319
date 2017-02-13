@@ -81,8 +81,14 @@ function getNFirstBlocksRecursive(n, start) {
               }
           },
           error: function(data){
-              console.log(data);
+              //console.log(data);
               alert("We have made too many requests to the API. Wait a while before making another call.");
+              $("#loading").css("display", "none");
+              $("body").append("<br class='graphBr'><br class='graphBr'>");
+              createHistogram();
+              $("body").append("<br class='graphBr'><br class='graphBr'>");
+              changeTXNumGraph();
+              $("body").append("<br class='graphBr'><br class='graphBr'>");
           }
       });
 }
@@ -110,8 +116,14 @@ function getLastNBlocksRecursive(n) {
             }
         },
         error: function(data) {
-            console.log(data);
+            //console.log(data);
             alert("We have made too many requests to the API. Wait a while before making another call.");
+            $("#loading").css("display", "none");
+            $("body").append("<br class='graphBr'><br class='graphBr'>");
+            createHistogram();
+            $("body").append("<br class='graphBr'><br class='graphBr'>");
+            changeTXNumGraph();
+            $("body").append("<br class='graphBr'><br class='graphBr'>");
         }
     });
 
