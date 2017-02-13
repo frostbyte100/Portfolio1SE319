@@ -7,10 +7,9 @@
     fill: brown;
 }
 
-
 .bar text{
     fill: #fff;
-    font: 12px sans-serif;
+    font: 30px sans-serif;
 }
 
 svg {
@@ -26,7 +25,6 @@ svg {
 .center {
     text-align: center;
 }
-
 
 #loading{
     display: none;

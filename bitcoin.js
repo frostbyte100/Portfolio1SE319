@@ -256,63 +256,97 @@ function createHistogram(){
 }
 
 function changeTXNumGraph(){
-
-    var margin = {top: 10, right: 30, bottom: 30, left: 30},
+    // set the dimensions and margins of the graph
+    var margin = {top: 20, right: 20, bottom: 30, left: 40},
         width = 960 - margin.left - margin.right,
-        height = 500 - margin.top - margin.bottom,
-        padding = 100;
+        height = 500 - margin.top - margin.bottom;
+
+// set the ranges
+    var x = d3.scaleBand()
+        .range([0, width])
+        .padding(0.1);
+    var y = d3.scaleLinear()
+        .range([height, 0]);
+
 
     var svg = d3.select("body").append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform",
+            "translate(" + margin.left + "," + margin.top + ")");
 
 
 
-    var x = d3.scaleBand().rangeRound([0, width]).padding(0.1),
-        y = d3.scaleOrdinal();
+        Blocks.forEach(function(d) {
+            d.numTx = +d.numTx;
+        });
 
-    var g = svg.append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        // Scale the range of the data in the domains
+        x.domain(Blocks.map(function(d) { return d.date.getDate() + " "+ d.date.getHours(); }));
+        y.domain([0, d3.max(Blocks, function(d) { return d.numTx; })]);
 
-    var data = Blocks;
-    x.domain(getBlockDomain());
+        // append the rectangles for the bar chart
+        svg.selectAll(".bar")
+            .data(Blocks)
+            .enter().append("rect")
+            .attr("class", "bar")
+            .attr("x", function(d) { return x(d.date.getDate() + " "+ d.date.getHours() ); })
+            .attr("width", x.bandwidth())
+            .attr("y", function(d) { return y(d.numTx); })
+            .attr("height", function(d) { return height - y(d.numTx); });
 
-    y.domain(getTxRange());
 
-    g.append("g")
-        .attr("class", "axis axis--x")
-        .attr("transform", "translate(0," + height + ")")
-        .call(d3.axisBottom(x).ticks(Blocks.length));
+        var range = getBlockDomain();
 
-    g.append("g")
-        .attr("class", "axis axis--y")
-        .call(d3.axisLeft(y).ticks(20))
-        .append("text")
-        .attr("transform", "rotate(-90)")
-        .attr("y", 6)
-        .attr("dy", "0.71em")
+        svg.append("text")
+        .attr("class", "x label")
         .attr("text-anchor", "end")
-        .text("Number of Transactions");
+        .attr("x", width/2)
+        .attr("y", 0)
+        .text(month[range[0].getMonth()] + " " + range[0].getFullYear() + " - " + month[range[1].getMonth()] + " " + range[1].getFullYear() );
 
-    g.selectAll(".bar")
-        .data(data)
-        .enter().append("rect")
-        .attr("class", "bar")
-        .attr("x", function (d) {
-            return x(d.date.toISOString().slice(0, 10));
-        })
-        .attr("y", function (d) {
-            return y(d.numTx);
-        })
-        //.attr("width", x.bandwidth())
-        .attr("height", function (d) {
-            return height - y(d.length);
-        })
+        // add the x Axis
+        svg.append("g")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(x));
+
+        // add the y Axis
+        svg.append("g")
+            .call(d3.axisLeft(y));
+
 }
 
 function makeTempCSV(){
+    console.clear();
     var str = "id,numTx,date\n";
     for(var x=0;x<Blocks.length;x++){
         str += x + ","+Blocks[x].numTx+","+Blocks[x].date+"\n";
     }
+}
+
+
+
+function formatDate(date) {
+    var x = getBlockDomain();
+    // if(x[0].sameDay(x[1])){
+    //     return date.getHours();
+    // }
+    var monthNames = [
+        "January", "February", "March",
+        "April", "May", "June", "July",
+        "August", "September", "October",
+        "November", "December"
+    ];
+
+    var day = date.getDate();
+    var monthIndex = date.getMonth();
+    var year = date.getFullYear();
+
+    return day + ' ' + monthNames[monthIndex] + ' ' + year;
+}
+Date.prototype.sameDay = function(d) {
+    return this.getFullYear() === d.getFullYear()
+        && this.getDate() === d.getDate()
+        && this.getMonth() === d.getMonth();
 }
