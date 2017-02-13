@@ -37,12 +37,11 @@ window.onload = new function() {
         }
     });
 
-
 };
 
-function clearSVG() {
-
+function clearGraphs() {
     $("body").find("svg").remove();
+    $("body").find(".graphBr").remove();
     Blocks = [];
 }
 
@@ -60,12 +59,12 @@ function getLastNBlocksRecursive(n) {
                 getLastNBlocksRecursive(n - 1);
             }
             if (n == 1) {
-
                 $("#loading").css("display", "none");
-
-                //createHistogram();
+                $("body").append("<br class='graphBr'><br class='graphBr'>");
+                createHistogram();
+                $("body").append("<br class='graphBr'><br class='graphBr'>");
                 changeTXNumGraph();
-
+                $("body").append("<br class='graphBr'><br class='graphBr'>");
 
             }
         },
@@ -82,8 +81,8 @@ function getFirstBlocks() {
         alert("Please enter number of blocks to be analyzed");
         return;
     }
-    clearSVG();
-    $("#loading").css("display", "in-line");
+    clearGraphs();
+    $("#loading").css("display","block");
     getNFirstBlocksRecursive(document.getElementById("numBlocks").value, 1);
 }
 
@@ -92,35 +91,37 @@ function getLastBlocks() {
         alert("Please enter number of blocks to be analyzed");
         return;
     }
-    clearSVG();
-    $("#loading").css("display", "in-line");
+    clearGraphs();
+    $("#loading").css("display","block");
     getLastNBlocksRecursive(document.getElementById("numBlocks").value);
 }
 
 function getNFirstBlocksRecursive(n, start) {
     $("#loading").show();
-    $.ajax({
-        url: "http://btc.blockr.io/api/v1/block/raw/" + start,
-        type: "GET",
-        dataType: "json",
-        success: function(data) {
-            Blocks.push(new Block(data["data"]["tx"].length, new Date(parseInt(data["data"]["time"]) * 1000)));
+      $.ajax({
+          url: "http://btc.blockr.io/api/v1/block/raw/"+start,
+          type: "GET",
+          dataType: "json",
+          success: function (data) {
+              Blocks.push( new Block(data["data"]["tx"].length, new Date( parseInt(data["data"]["time"])*1000 )));
 
-            if (start != n) {
-                getNFirstBlocksRecursive(n, start + 1);
-            }
-            if (start == n) {
-                $("#loading").css("display", "none");
-
-                //createHistogram();
-                changeTXNumGraph();
-            }
-        },
-        error: function(data) {
-            console.log(data);
-            alert("We have made too many requests to the API. Wait a while before making another call.");
-        }
-    });
+              if(start!=n){
+                  getNFirstBlocksRecursive(n,start+1);
+              }
+              if(start==n){
+                  $("#loading").css("display","none");
+                  $("body").append("<br class='graphBr'><br class='graphBr'>");
+                  createHistogram();
+                  $("body").append("<br class='graphBr'><br class='graphBr'>");
+                  changeTXNumGraph();
+                  $("body").append("<br class='graphBr'><br class='graphBr'>");
+              }
+          },
+          error: function(data){
+              console.log(data);
+              alert("We have made too many requests to the API. Wait a while before making another call.");
+          }
+      });
 }
 
 function getTxRange() {
@@ -273,8 +274,6 @@ function changeTXNumGraph() {
         .entries(Blocks);
     console.log(data);
 
-
-
     // set the dimensions and margins of the graph
     var margin = {
             top: 40,
@@ -292,17 +291,12 @@ function changeTXNumGraph() {
     var y = d3.scaleLinear()
         .range([height, 0]);
 
-
-
     var svg = d3.select("body").append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
         .attr("transform",
             "translate(" + margin.left + "," + margin.top + ")");
-
-
-
 
     // Scale the range of the data in the domains
     x.domain(data.map(function(d) {
@@ -343,7 +337,7 @@ function changeTXNumGraph() {
         .attr("class", "x label")
         .attr("text-anchor", "middle")
         .attr("x", width / 2)
-        .attr("y", height+70)
+        .attr("y", height+75)
         .style("font-size","14px")
         .text(month[range[0].getMonth()] + " " + range[0].getDate() + ", " + range[0].getFullYear() + " - " + month[range[1].getMonth()] + " " + range[0].getDate() + ", " + range[1].getFullYear());
 
@@ -374,6 +368,7 @@ function changeTXNumGraph() {
         .attr("y", function(d) {
             return y(d.value) + 15;
         });
+
 }
 
 function formatDate(date) {
@@ -381,8 +376,6 @@ function formatDate(date) {
     var year = date.getFullYear();
     return (date.getMonth() + 1) + '/' + day + '/' + year;
 }
-
-
 
 function formatAMPM(date) {
     var hours = date.getHours();

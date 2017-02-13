@@ -24,10 +24,13 @@ svg {
     margin-bottom: 30px;
     width: 960px;
     height: 500px;
+    display: block;
+    margin: auto;
 }
 
 .center {
     text-align: center;
+    margin: auto;
 }
 
 #loading{
