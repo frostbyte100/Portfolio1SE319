@@ -12,10 +12,16 @@
    <body>
        <h1 class="center">Bitcoin Block Analysis</h1>
        <div class="center">
-           <p>Due to Bitcoin's limit on how many calls can be made to the API from<br>
-              a single IP address in a given time interval this program is limited in<br>
-              the number of blocks it can process at a time.Please limit blocks to < 200 or<br>
-              contact Bitcoin for permission to make a larger number of calls.<br></p>
+           <p>This program accumulates transaction data from Bitcoin's API stored in
+              objects called blocks. It then generates graphs representing said data.<br>
+              The following graphs model the number of blocks of transactions completed
+              per hour and the number of transactions confirmed per hour for a given number<br>
+              of blocks. These blocks can be mined from either the beginning or the end of
+              Bitcoin's block chain as the user specifies.<br><br>
+              Due to Bitcoin's limit on how many calls can be made to the API from
+              an unknown IP address in a given time interval this program is limited in<br>
+              the number of blocks of data it can mine at a time. Please limit blocks called to 200 or less.
+              Otherwise, contact Bitcoin for permission to make a larger number of calls.<br></p>
        </div>
        <form class="center">
             Number of Blocks <input type="text" id="numBlocks">
