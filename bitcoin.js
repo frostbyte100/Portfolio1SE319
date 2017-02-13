@@ -374,20 +374,11 @@ function changeTXNumGraph() {
         .attr("y", function(d) {
             return y(d.value) + 15;
         });
-
-
-
 }
 
-
-
-
 function formatDate(date) {
-
     var day = date.getDate();
-    // var monthIndex = date.getMonth();
     var year = date.getFullYear();
-
     return (date.getMonth() + 1) + '/' + day + '/' + year;
 }
 
