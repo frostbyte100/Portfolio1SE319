@@ -20,10 +20,9 @@ svg{
     margin-bottom: 30px;
     width: 960px;
     height: 500px;
-
-    fill: steelblue;
 }
 
+
 #loading{
-    visibility: hidden;
+    display: none;
 }
