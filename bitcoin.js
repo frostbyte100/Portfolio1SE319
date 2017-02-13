@@ -1,7 +1,5 @@
 'use strict';
 
-var transactions = [];
-var exchangeRate;
 var lastBlockNum;
 
 var month = new Array();
@@ -32,22 +30,6 @@ window.onload = new function() {
         dataType: "json",
         success: function(data) {
             lastBlockNum = data["data"]["height"];
-            $.ajax({
-                url: 'http://btc.blockr.io/api/v1/exchangerate/current',
-                type: "GET",
-                dataType: "json",
-                success: function(data) {
-
-                    exchangeRate = data["data"][0]["rates"]["BTC"];
-                    console.log(lastBlockNum);
-                    console.log(exchangeRate);
-
-                },
-                error: function(data) {
-                    console.log(data);
-                    alert("We have made too many requests to the API. Wait a while before making another call.");
-                }
-            });
         },
         error: function(data) {
             console.log(data);
@@ -80,7 +62,7 @@ function getLastNBlocksRecursive(n) {
             if (n == 1) {
 
                 $("#loading").css("display", "none");
-                makeTempCSV();
+
                 //createHistogram();
                 changeTXNumGraph();
 
@@ -129,7 +111,7 @@ function getNFirstBlocksRecursive(n, start) {
             }
             if (start == n) {
                 $("#loading").css("display", "none");
-                makeTempCSV();
+
                 //createHistogram();
                 changeTXNumGraph();
             }
@@ -397,28 +379,10 @@ function changeTXNumGraph() {
 
 }
 
-function makeTempCSV() {
-    console.clear();
-    var str = "id,numTx,date\n";
-    for (var x = 0; x < Blocks.length; x++) {
-        str += x + "," + Blocks[x].numTx + "," + Blocks[x].date + "\n";
-    }
-    console.log(str);
-}
 
 
 
 function formatDate(date) {
-    var x = getBlockDomain();
-    // if(x[0].sameDay(x[1])){
-    //     return date.getHours();
-    // }
-    var monthNames = [
-        "January", "February", "March",
-        "April", "May", "June", "July",
-        "August", "September", "October",
-        "November", "December"
-    ];
 
     var day = date.getDate();
     // var monthIndex = date.getMonth();
