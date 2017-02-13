@@ -338,7 +338,7 @@ function changeTXNumGraph() {
         .attr("x", width / 2)
         .attr("y", height+75)
         .style("font-size","14px")
-        .text(month[range[0].getMonth()] + " " + range[0].getDate() + ", " + range[0].getFullYear() + " - " + month[range[1].getMonth()] + " " + range[0].getDate() + ", " + range[1].getFullYear());
+        .text(month[range[0].getMonth()] + " " + range[0].getDate() + ", " + range[0].getFullYear() + " - " + month[range[1].getMonth()] + " " + range[1].getDate() + ", " + range[1].getFullYear());
 
     // add the x Axis
     svg.append("g")
