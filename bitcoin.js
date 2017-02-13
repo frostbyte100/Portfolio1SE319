@@ -1,7 +1,5 @@
 'use strict';
 
-var transactions = [];
-var exchangeRate;
 var lastBlockNum;
 
 var month = new Array();
@@ -61,7 +59,6 @@ function getLastNBlocksRecursive(n) {
                 getLastNBlocksRecursive(n - 1);
             }
             if (n == 1) {
-
                 $("#loading").css("display", "none");
                 $("body").append("<br class='graphBr'><br class='graphBr'>");
                 createHistogram();
@@ -277,8 +274,6 @@ function changeTXNumGraph() {
         .entries(Blocks);
     console.log(data);
 
-
-
     // set the dimensions and margins of the graph
     var margin = {
             top: 40,
@@ -296,17 +291,12 @@ function changeTXNumGraph() {
     var y = d3.scaleLinear()
         .range([height, 0]);
 
-
-
     var svg = d3.select("body").append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
         .attr("transform",
             "translate(" + margin.left + "," + margin.top + ")");
-
-
-
 
     // Scale the range of the data in the domains
     x.domain(data.map(function(d) {
@@ -379,21 +369,9 @@ function changeTXNumGraph() {
             return y(d.value) + 15;
         });
 
-
-
 }
 
 function formatDate(date) {
-    var x = getBlockDomain();
-    // if(x[0].sameDay(x[1])){
-    //     return date.getHours();
-    // }
-    var monthNames = [
-        "January", "February", "March",
-        "April", "May", "June", "July",
-        "August", "September", "October",
-        "November", "December"
-    ];
 
     var day = date.getDate();
     // var monthIndex = date.getMonth();
