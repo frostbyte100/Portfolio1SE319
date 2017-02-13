@@ -3,18 +3,18 @@
 var lastBlockNum;
 
 var month = new Array();
-month[0] = "January";
-month[1] = "February";
-month[2] = "March";
-month[3] = "April";
-month[4] = "May";
-month[5] = "June";
-month[6] = "July";
-month[7] = "August";
-month[8] = "September";
-month[9] = "October";
-month[10] = "November";
-month[11] = "December";
+    month[0] = "January";
+    month[1] = "February";
+    month[2] = "March";
+    month[3] = "April";
+    month[4] = "May";
+    month[5] = "June";
+    month[6] = "July";
+    month[7] = "August";
+    month[8] = "September";
+    month[9] = "October";
+    month[10] = "November";
+    month[11] = "December";
 
 function Block(numTx, date) {
     this.numTx = numTx;
@@ -38,43 +38,6 @@ window.onload = new function() {
     });
 
 };
-
-function clearGraphs() {
-    $("body").find("svg").remove();
-    $("body").find(".graphBr").remove();
-    Blocks = [];
-}
-
-
-function getLastNBlocksRecursive(n) {
-    $("#loading").show();
-    $.ajax({
-        url: "http://btc.blockr.io/api/v1/block/raw/" + (lastBlockNum - n),
-        type: "GET",
-        dataType: "json",
-        success: function(data) {
-            Blocks.push(new Block(data["data"]["tx"].length, new Date(parseInt(data["data"]["time"]) * 1000)));
-
-            if (n != 1) {
-                getLastNBlocksRecursive(n - 1);
-            }
-            if (n == 1) {
-                $("#loading").css("display", "none");
-                $("body").append("<br class='graphBr'><br class='graphBr'>");
-                createHistogram();
-                $("body").append("<br class='graphBr'><br class='graphBr'>");
-                changeTXNumGraph();
-                $("body").append("<br class='graphBr'><br class='graphBr'>");
-
-            }
-        },
-        error: function(data) {
-            console.log(data);
-            alert("We have made too many requests to the API. Wait a while before making another call.");
-        }
-    });
-
-}
 
 function getFirstBlocks() {
     if (document.getElementById("numBlocks").value === "") {
@@ -122,6 +85,42 @@ function getNFirstBlocksRecursive(n, start) {
               alert("We have made too many requests to the API. Wait a while before making another call.");
           }
       });
+}
+
+function getLastNBlocksRecursive(n) {
+    $("#loading").show();
+    $.ajax({
+        url: "http://btc.blockr.io/api/v1/block/raw/" + (lastBlockNum - n),
+        type: "GET",
+        dataType: "json",
+        success: function(data) {
+            Blocks.push(new Block(data["data"]["tx"].length, new Date(parseInt(data["data"]["time"]) * 1000)));
+
+            if (n != 1) {
+                getLastNBlocksRecursive(n - 1);
+            }
+            if (n == 1) {
+                $("#loading").css("display", "none");
+                $("body").append("<br class='graphBr'><br class='graphBr'>");
+                createHistogram();
+                $("body").append("<br class='graphBr'><br class='graphBr'>");
+                changeTXNumGraph();
+                $("body").append("<br class='graphBr'><br class='graphBr'>");
+
+            }
+        },
+        error: function(data) {
+            console.log(data);
+            alert("We have made too many requests to the API. Wait a while before making another call.");
+        }
+    });
+
+}
+
+function clearGraphs() {
+    $("body").find("svg").remove();
+    $("body").find(".graphBr").remove();
+    Blocks = [];
 }
 
 function getTxRange() {
