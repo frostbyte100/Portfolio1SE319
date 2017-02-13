@@ -81,9 +81,8 @@ function getLastNBlocksRecursive(n){
 
                 $("#loading").css("display","none");
                 makeTempCSV();
-                createHistogram();
-                //changeTXNumGraph();
-
+                //createHistogram();
+                changeTXNumGraph();
 
             }
         },
@@ -122,8 +121,8 @@ function getLastBlocks(){
               if(start==n){
                   $("#loading").css("display","none");
                   makeTempCSV();
-                  createHistogram();
-                  //changeTXNumGraph();
+                  //createHistogram();
+                  changeTXNumGraph();
               }
           },
           error: function(data){
@@ -250,10 +249,21 @@ function createHistogram(){
 }
 
 function changeTXNumGraph(){
+
+
+
+    var data = d3.nest()
+        .key(function(d) { return formatDate(d.date) + " "+ formatAMPM(d.date); })
+        .rollup(function(v) { return d3.sum(v, function(d) { return d.numTx; }); })
+        .entries(Blocks);
+    console.log(data);
+
+
+
     // set the dimensions and margins of the graph
-    var margin = {top: 20, right: 20, bottom: 30, left: 40},
+    var margin = {top: 40, right: 30, bottom: 60, left: 60},
         width = 960 - margin.left - margin.right,
-        height = 500 - margin.top - margin.bottom;
+        height = 480 - margin.top - margin.bottom;
 
 // set the ranges
     var x = d3.scaleBand()
@@ -261,6 +271,7 @@ function changeTXNumGraph(){
         .padding(0.1);
     var y = d3.scaleLinear()
         .range([height, 0]);
+
 
 
     var svg = d3.select("body").append("svg")
@@ -272,42 +283,57 @@ function changeTXNumGraph(){
 
 
 
-        Blocks.forEach(function(d) {
-            d.numTx = +d.numTx;
-        });
 
         // Scale the range of the data in the domains
-        x.domain(Blocks.map(function(d) { return d.date.getDate() + " "+ d.date.getHours(); }));
-        y.domain([0, d3.max(Blocks, function(d) { return d.numTx; })]);
+        x.domain(data.map(function(d) { return d.key; }));
+        y.domain([0, d3.max(data, function(d) { return d.value; })]);
 
         // append the rectangles for the bar chart
-        svg.selectAll(".bar")
-            .data(Blocks)
+        var bar = svg.selectAll(".bar")
+            .data(data)
             .enter().append("rect")
             .attr("class", "bar")
-            .attr("x", function(d) { return x(d.date.getDate() + " "+ d.date.getHours() ); })
+            .attr("x", function(d) { return x(d.key); })
             .attr("width", x.bandwidth())
-            .attr("y", function(d) { return y(d.numTx); })
-            .attr("height", function(d) { return height - y(d.numTx); });
+            .attr("y", function(d) { return y(d.value); })
+            .attr("height", function(d) { return height - y(d.value); });
+
+    svg.selectAll("text.bar")
+        .data(data)
+    .enter().append("text")
+        .attr("class", "bar")
+        .attr("text-anchor", "middle")
+        .attr("x", function(d) {
+        return x(d.Year) + (x.rangeBand() / 2) - (this.getBBox().width / 2);
+    })
+        .attr("y", function(d) { return y(d.value) ; })
+        .text(function(d) { return d.value; });
 
 
-        var range = getBlockDomain();
+    var range = getBlockDomain();
 
         svg.append("text")
         .attr("class", "x label")
         .attr("text-anchor", "end")
         .attr("x", width/2)
-        .attr("y", 0)
+        .attr("y", -10)
         .text(month[range[0].getMonth()] + " " + range[0].getFullYear() + " - " + month[range[1].getMonth()] + " " + range[1].getFullYear() );
 
         // add the x Axis
         svg.append("g")
             .attr("transform", "translate(0," + height + ")")
-            .call(d3.axisBottom(x));
+            .call(d3.axisBottom(x))
+            .selectAll("text")
+            .style("text-anchor", "end")
+            .attr("dx", "-.8em")
+            .attr("dy", ".15em")
+            .attr("transform", "rotate(-45)");
 
         // add the y Axis
         svg.append("g")
             .call(d3.axisLeft(y));
+
+
 
 }
 
@@ -316,7 +342,7 @@ function makeTempCSV(){
     var str = "id,numTx,date\n";
     for(var x=0;x<Blocks.length;x++){
         str += x + ","+Blocks[x].numTx+","+Blocks[x].date+"\n";
-    }
+    }console.log(str);
 }
 
 
@@ -334,13 +360,23 @@ function formatDate(date) {
     ];
 
     var day = date.getDate();
-    var monthIndex = date.getMonth();
+    // var monthIndex = date.getMonth();
     var year = date.getFullYear();
 
-    return day + ' ' + monthNames[monthIndex] + ' ' + year;
+    return (date.getMonth()+1) + '/' + day + '/' + year;
 }
 Date.prototype.sameDay = function(d) {
     return this.getFullYear() === d.getFullYear()
         && this.getDate() === d.getDate()
         && this.getMonth() === d.getMonth();
+}
+
+function formatAMPM(date) {
+    var hours = date.getHours();
+    var minutes = date.getMinutes();
+    var ampm = hours >= 12 ? 'pm' : 'am';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    var strTime = hours  + ampm;
+    return strTime;
 }
