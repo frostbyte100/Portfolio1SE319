@@ -84,6 +84,7 @@ function getLastNBlocksRecursive(n){
                 //createHistogram();
                 changeTXNumGraph();
 
+
             }
         },
         error: function(data){
@@ -95,12 +96,20 @@ function getLastNBlocksRecursive(n){
 }
 
 function getFirstBlocks(){
+    if(document.getElementById("numBlocks").value === ""){
+        alert("Please enter number of blocks to be analyzed");
+        return;
+    }
     clearSVG();
     $("#loading").css("display","in-line");
     getNFirstBlocksRecursive(document.getElementById("numBlocks").value, 1);
 }
 
 function getLastBlocks(){
+    if(document.getElementById("numBlocks").value === ""){
+        alert("Please enter number of blocks to be analyzed");
+        return;
+    }
     clearSVG();
     $("#loading").css("display","in-line");
     getLastNBlocksRecursive(document.getElementById("numBlocks").value);
@@ -242,7 +251,7 @@ function createHistogram(){
 
     svg.append("text")
         .attr("x", width/2)
-        .attr("y", 0 - 10)
+        .attr("y",-10)
         .attr("text-anchor", "middle")
         .style("font-size", "16px")
         .text("Number of Blocks per Hour");

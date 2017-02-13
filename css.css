@@ -12,8 +12,7 @@
     font: 12px sans-serif;
 }
 
-
-svg{
+svg {
     margin-top: 20px;
     margin-right: 20px;
     margin-left: 40px;
@@ -22,6 +21,11 @@ svg{
     height: 500px;
 }
 
+.center {
+    text-align: center;
+}
+
 #loading{
     display: none;
+    margin-left:auto;
 }

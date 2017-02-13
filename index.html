@@ -10,20 +10,20 @@
 
    </head>
    <body>
-       <h1>Bitcoin Block Analysis</h1>
-       <p>Due to Bitcoin's limit on API calls this program cannot fetch a<br>
-          significant number of blocks. Please limit blocks to < 200 or <br>
-          contact Bitcoin for permission to make a larger number of calls.<br></p>
-       <form>
+       <h1 class="center">Bitcoin Block Analysis</h1>
+       <div class="center">
+           <p>Due to Bitcoin's limit on how many calls can be made to the API from<br>
+              a single IP address in a given time interval this program is limited in<br>
+              the number of blocks it can process at a time.Please limit blocks to < 200 or<br>
+              contact Bitcoin for permission to make a larger number of calls.<br></p>
+       </div>
+       <form class="center">
             Number of Blocks <input type="text" id="numBlocks">
             <input type="button" value="First Blocks" onclick="getFirstBlocks()">
             <input type="button" value="Last Blocks" onclick="getLastBlocks()">
        </form>
 
-       <img src="balls.gif" id="loading">
-
-
-       <div class="chart"></div>
+       <img src="balls.gif" id="loading" class="center">
 
    </body>
 </html>
