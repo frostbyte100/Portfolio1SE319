@@ -66,7 +66,7 @@ function clearSVG(){
 
 
 function getLastNBlocksRecursive(n){
-
+    $("#loading").show();
     $.ajax({
         url: "http://btc.blockr.io/api/v1/block/raw/"+ (lastBlockNum-n),
         type: "GET",
@@ -79,10 +79,11 @@ function getLastNBlocksRecursive(n){
             }
             if(n==1){
 
-                $("#loading").css("visibility","hidden");
+                $("#loading").css("display","none");
                 makeTempCSV();
-                //makeHistogram();
-                changeTXNumGraph();
+                createHistogram();
+                //changeTXNumGraph();
+
 
             }
         },
@@ -96,13 +97,13 @@ function getLastNBlocksRecursive(n){
 
 function getFirstBlocks(){
     clearSVG();
-    $("#loading").css("visibility","visible");
+    $("#loading").css("display","in-line");
     getNFirstBlocksRecursive(document.getElementById("numBlocks").value, 1);
 }
 
 function getLastBlocks(){
     clearSVG();
-    $("#loading").css("visibility","visible");
+    $("#loading").css("display","in-line");
     getLastNBlocksRecursive(document.getElementById("numBlocks").value);
 }
 
@@ -119,10 +120,10 @@ function getLastBlocks(){
                   getNFirstBlocksRecursive(n,start+1);
               }
               if(start==n){
-                  $("#loading").css("visibility","hidden");
+                  $("#loading").css("display","none");
                   makeTempCSV();
-                  //createHistogram();
-                  changeTXNumGraph();
+                  createHistogram();
+                  //changeTXNumGraph();
               }
           },
           error: function(data){
@@ -177,12 +178,18 @@ function createHistogram(){
     var parseDate = d3.timeParse("%m/%d/%Y %H:%M:%S %p"),
       formatCount = d3.format(",.0f");
 
-    var margin = {top: 10, right: 30, bottom: 30, left: 30},
+    var margin = {top: 30, right: 30, bottom: 40, left: 30},
         width = 960 - margin.left - margin.right,
         height = 500 - margin.top - margin.bottom;
 
+    var domain = getBlockDomain()
+    var xAxisLabel = month[domain[0].getMonth()] + " " + domain[0].getDate()
+                     + ", " + domain[0].getFullYear() + " - " +
+                     month[domain[1].getMonth()] + " " + domain[1].getDate()
+                     + ", " + domain[1].getFullYear();
+
     var x = d3.scaleTime()
-        .domain(getBlockDomain())
+        .domain(domain)
         .rangeRound([0, width]);
 
     var y = d3.scaleLinear()
@@ -191,7 +198,7 @@ function createHistogram(){
     var histogram = d3.histogram()
         .value(function(d) { return d.date; })
         .domain(x.domain())
-        .thresholds(x.ticks(d3.timeHour));
+            .thresholds(x.ticks(d3.timeHour));
 
     var svg = d3.select("body").append("svg")
         .attr("width", width + margin.left + margin.right)
@@ -205,11 +212,11 @@ function createHistogram(){
         .call(d3.axisBottom(x));
 
     svg.append("text")
-        .attr("class", "x label")
-        .attr("text-anchor", "end")
+        .attr("text-anchor", "middle")
         .attr("x", width/2)
-        .attr("y", 10)
-        .text(month[Blocks[0].date.getMonth()] + " " + Blocks[0].date.getFullYear());
+        .attr("y", height + 35)
+        .style("font-size", "14px")
+        .text(xAxisLabel);
 
     var bins = histogram(Blocks);
     y.domain([0, d3.max(bins, function(d) { return d.length; })]);
@@ -217,7 +224,8 @@ function createHistogram(){
             .data(bins)
             .enter().append("g")
                 .attr("class", "bar")
-                .attr("transform", function(d) { return "translate(" + x(d.x0) + "," + y(d.length) + ")"; });
+                .attr("transform", function(d) { return "translate(" + x(d.x0)
+                      + "," + y(d.length) + ")"; });
 
        bar.append("rect")
             .attr("x", 1)
@@ -229,7 +237,16 @@ function createHistogram(){
             .attr("y", 6)
             .attr("x", function(d) { return (x(d.x1) - x(d.x0)) / 2; })
             .attr("text-anchor", "middle")
-            .text(function(d) { return formatCount(d.length); });
+            .text(function(d) {
+                if(d.length != 0){return formatCount(d.length);}
+                else{return ""}});
+
+    svg.append("text")
+        .attr("x", width/2)
+        .attr("y", 0 - 10)
+        .attr("text-anchor", "middle")
+        .style("font-size", "16px")
+        .text("Number of Blocks per Hour");
 }
 
 function changeTXNumGraph(){
@@ -300,7 +317,6 @@ function makeTempCSV(){
     for(var x=0;x<Blocks.length;x++){
         str += x + ","+Blocks[x].numTx+","+Blocks[x].date+"\n";
     }
-    console.log(str);
 }
 
 
