@@ -40,9 +40,14 @@ window.onload = new function() {
 };
 
 function getFirstBlocks() {
+
     if (document.getElementById("numBlocks").value === "") {
         alert("Please enter number of blocks to be analyzed");
         return;
+    }
+    if(!numCheck(document.getElementById("numBlocks").value)){
+      alert("Please enter a number");
+      return;
     }
     clearGraphs();
     $("#loading").css("display","block");
@@ -53,6 +58,10 @@ function getLastBlocks() {
     if (document.getElementById("numBlocks").value === "") {
         alert("Please enter number of blocks to be analyzed");
         return;
+    }
+    if(!numCheck(document.getElementById("numBlocks").value)){
+      alert("Please enter a number");
+      return;
     }
     clearGraphs();
     $("#loading").css("display","block");
@@ -133,22 +142,6 @@ function clearGraphs() {
     $("body").find("svg").remove();
     $("body").find(".graphBr").remove();
     Blocks = [];
-}
-
-function getTxRange() {
-    var lowest = Number.MAX_SAFE_INTEGER;
-    var highest = Number.MIN_VALUE;
-    for (var x = 0; x < Blocks.length; x++) {
-        if (Blocks[x].numTx > highest) {
-            highest = Blocks[x];
-        }
-        if (Blocks[x].numTx < lowest) {
-            lowest = Blocks[x];
-        }
-    }
-    var x = [];
-    x.push(Math.max(0, lowest - 100), highest + 100);
-    return x;
 }
 
 function getBlockDomain() {
@@ -283,7 +276,7 @@ function changeTXNumGraph() {
             });
         })
         .entries(Blocks);
-    console.log(data);
+    //console.log(data);
 
     // set the dimensions and margins of the graph
     var margin = {
@@ -395,4 +388,13 @@ function formatAMPM(date) {
     hours = hours ? hours : 12; // the hour '0' should be '12'
     var strTime = hours + ampm;
     return strTime;
+}
+
+function numCheck(entry) {
+    let regex = /^[0-9]+$/i;
+    if (entry != null && entry.match(regex)) {
+        return true;
+    } else {
+        return false;
+    }
 }
